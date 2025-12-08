@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跑团好恶CHECK表</title>
+  <style id="style-block">
+    *{box-sizing:border-box}
+    body{margin:0;background:#ffffff}
+    .page{width:1080px;margin:0 auto;position:relative}
+    .head{height:160px;background:#111111;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .title{font-family:Georgia,'Times New Roman',serif;color:#fff;font-size:54px;font-weight:800;position:relative;z-index:1}
+    .brand{position:absolute;left:-30px;bottom:-40px;font-family:Impact,Haettenschweiler,'Arial Black','Segoe UI Black',sans-serif;font-size:200px;font-weight:900;pointer-events:none;opacity:0.7;z-index:0;background-image:radial-gradient(circle at 0 0, rgba(0,0,0,0.22) 0 2px, transparent 2px),radial-gradient(circle at 6px 6px, rgba(0,0,0,0.22) 0 2px, transparent 2px),linear-gradient(to bottom, #9ca3af 0%, #000000 100%);background-size:12px 12px,12px 12px,100% 100%;background-repeat:repeat;background-position:0 0,0 0,0 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+    .author{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:22px;margin:30px 40px 0 40px;text-align:right}
+    .profile{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:20px;margin:16px 40px 0 40px;display:flex;justify-content:space-between;align-items:center}
+    .profile-left,.profile-right{white-space:nowrap}
+    .profile-right{text-align:right}
+    .fill{appearance:none;border:0;outline:0;background:transparent;border-bottom:1px solid #e5e7eb;color:#111;font-family:Georgia,'Times New Roman',serif;font-size:20px;padding:0 2px;margin-left:6px;min-width:140px}
+    .origin{font-family:Georgia,'Times New Roman',serif;color:#9ca3af;font-size:13px;margin:8px 40px 0 40px;line-height:1.4;font-style:italic}
+    .origin a{color:#9ca3af;text-decoration:underline}
+    .origin a:hover{text-decoration:underline}
+    .wrap{font-family:Georgia,'Times New Roman',serif;color:#111;margin:10px 40px 0 40px}
+    .legend{display:flex;align-items:center;gap:18px;margin:12px 0 24px 0}
+    .legend .pair{display:flex;align-items:center;gap:8px}
+    .legend .ring.ok{background:#22c55e;border-color:#22c55e}
+    .legend .ring.meh{background:#f59e0b;border-color:#f59e0b}
+    .legend .ring.bad{background:#ef4444;border-color:#ef4444}
+    .legend .t{font-size:28px;font-weight:800;color:#111}
+    .label{font-size:24px;color:#4b5563}
+    .ring{display:inline-block;width:32px;height:32px;border-radius:999px;background:transparent;vertical-align:middle;border:3px solid #9ca3af;cursor:pointer;user-select:none}
+    .ring.sel{outline:2px solid rgba(0,0,0,0.06)}
+    .rings .ring:nth-child(1).sel{background:#22c55e;border-color:#22c55e}
+    .rings .ring:nth-child(2).sel{background:#f59e0b;border-color:#f59e0b}
+    .rings .ring:nth-child(3).sel{background:#ef4444;border-color:#ef4444}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .sub{font-size:28px;font-weight:800;color:#111;margin:8px 0 10px 0}
+    .col-head{display:flex;justify-content:flex-end;gap:14px;color:#9ca3af;font-size:14px;margin:4px 0 6px 0;line-height:1.1;text-align:center}
+    .col-head span{width:32px;display:inline-block}
+    .list{display:flex;flex-direction:column;gap:6px}
+    .row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #e5e7eb}
+    .label{display:flex;flex-direction:column;flex:1;min-width:0}
+    .name{display:block;font-size:26px;font-weight:800;color:#111;line-height:1.6}
+    .desc{display:block;font-size:16px;color:#6b7280;margin-left:0;margin-top:1px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rings{display:flex;gap:14px;flex-shrink:0}
+    .choice{display:flex;align-items:center;gap:16px;flex-shrink:0}
+    .xmark{display:inline-block;width:32px;height:32px;cursor:pointer;background-repeat:no-repeat;background-position:center;background-size:100% 100%;position:relative;z-index:1}
+    .xmark{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linejoin='round'/></svg>")}
+    .xmark.sel{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='%237f1d1d' stroke='%237f1d1d' stroke-width='2' stroke-linejoin='round'/></svg>")}
+    .foot{display:flex;align-items:center;gap:12px;justify-content:flex-end;margin:18px 40px 24px 40px}
+    .badge{width:120px;height:34px;border-radius:17px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+    .badge span{font-family:Georgia,'Times New Roman',serif;color:#6b7280;font-size:18px}
+    .actions{position:fixed;right:24px;bottom:24px;z-index:10}
+    .btn{appearance:none;border:0;outline:0;background:#111111;color:#ffffff;font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:700;border-radius:10px;padding:10px 14px;cursor:pointer}
+    .btn:active{transform:scale(0.98)}
+    .btn.btn-lg{font-size:18px;padding:14px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+    .preview{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100}
+    .preview.show{display:flex}
+    .preview .backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.4)}
+    .preview .panel{position:relative;background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,0.25);padding:16px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;gap:12px}
+    .preview .panel .hd{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:18px;font-weight:800}
+    .preview .panel img{max-width:100%;max-height:70vh;border:1px solid #e5e7eb;border-radius:8px;cursor:zoom-in}
+    .preview .panel.zoom{overflow:auto}
+    .preview .panel.zoom img{max-width:none;max-height:none;cursor:zoom-out}
+    .preview-actions{display:flex;gap:10px;justify-content:flex-end}
+    .btn[aria-disabled="true"]{opacity:.5;pointer-events:none}
+    .notes{font-family:Georgia,'Times New Roman',serif;color:#111;margin:20px 40px}
+    .notes-hd{font-size:20px;font-weight:800;margin-bottom:8px}
+    .notes-input{width:100%;min-height:120px;border:1px solid #e5e7eb;border-radius:8px;padding:10px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#111;resize:none}
+  </style>
+</head>
+<body>
+  <div class="page" id="capture">
+    <div class="head"><div class="title">跑团好恶CHECK表</div><div class="brand">inSANe</div></div>
+    <div class="profile"><span class="profile-left">填表人：<input class="fill" type="text">  常用跑团平台：<input class="fill" type="text"></span><span class="profile-right">翻译：瞬蓝  制表：燕</span></div>
+    <div class="origin">
+      翻译/参考『蜜蝋文庫専用・地雷チェックシート』【 <a href="https://www.pixiv.net/novel/show.php?id=14545836" target="_blank" rel="noopener noreferrer">https://www.pixiv.net/novel/show.php?id=14545836</a> 】<br>
+      シナリオ要素事前チェックシート【 <a href="https://fimless.booth.pm/items/2640500" target="_blank" rel="noopener noreferrer">https://fimless.booth.pm/items/2640500</a> 】
+    </div>
+    
+    <div class="wrap">
+      <div class="legend">
+        <span class="t">选项说明：</span>
+        <span class="pair"><span class="label">ok</span><span class="ring ok"></span></span>
+        <span class="pair"><span class="label">勉强可以</span><span class="ring meh"></span></span>
+        <span class="pair"><span class="label">完全不行</span><span class="ring bad"></span></span>
+        <span class="pair"><span class="label">本人参与绝对不行</span><span class="xmark sel" title="旁观OK，我参与NO"></span></span>
+      </div>
+      <div class="cols">
+        <div>
+          <div class="col-head"><span></span><span>ok</span><span>勉强<br>可以</span><span>完全<br>不行</span></div>
+          <div class="list">
+            <div class="row"><span class="name">PC死亡</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC杀人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC犯罪</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC社会性死亡</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC间对立</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">NPC死亡</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">撕卡率高</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">确定撕卡</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">复杂机制</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">困难的战斗</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">询问</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">恋爱要素</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">BL</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">GL</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">NL</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">相同面容CP（水仙）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">女体化</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">兄弟情（Bromance）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">变性人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">作为创作物的性别偏见</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">肉体上NTR、被NTR</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">精神上NTR、被NTR</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">近亲相奸</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">未合意性行为</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">堕胎</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">精神疾病</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">肉体疾病</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">多重人格</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">记忆丧失</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">自残行为</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">自杀</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">殉情</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">暴力表现</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">猎奇描写</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">四肢欠损</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">虫</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">战争</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">宗教</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">药物（Drug）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">火</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">火灾</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">地震</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">海啸</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sub"></div>
+          <div class="col-head"><span></span><span>ok</span><span>勉强<br>可以</span><span>完全<br>不行</span></div>
+          <div class="list">
+            <div class="row"><span class="name">人偶</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">食人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">密集恐惧症</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">轮回</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">转生</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">现实的神佛</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">以实际存在事件为原型描写</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">死后世界的独自设定</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">死者复活</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">重要之人的仿冒品</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">登场人物拟态成他人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC之中栖息其他存在</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">PC变为非人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">毫不讲理的展开</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">毫不讲理的死</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">与PC意志无关描写PC的行动</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">尽最大努力还是BAD END</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">不存在HAPPY END</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">赋予PC特殊设定（自认内容）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">赋予PC特殊设定（未自认内容）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">R-15</span><span class="desc">虽然没有具体的性描写、但描述暗示了其内容。</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">R-18</span><span class="desc">有具体的性描写。</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">R-18G</span><span class="desc">包含过度的猎奇描写。</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">科幻设定</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">魔幻设定</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">恋爱要素</span><span class="desc">特指PC或NPC的文档/秘密内指定恋爱倾向。</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">多角恋爱</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">异种恋爱</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">排泄</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">蛇</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">政治敏感描述</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">现实古代</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">架空古代</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">（校园/职场）霸凌</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">对规则原本世界观的修改·个人解释</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">使用来自其他作品的世界观</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">使用来自其他作品（非原创）的角色</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">克苏鲁神话元素</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">使用同人扩展/原创战斗数据</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">无剧情分歧（一本道）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">不严谨/以搞笑内容为主（茶番）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">平行世界</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">拷问/虐待</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="notes-hd">备注</div>
+      <textarea class="notes-input"></textarea>
+    </div>
+    <div class="foot"></div>
+  </div>
+  <div class="actions"><button class="btn btn-lg" id="btnExport">导出图片</button></div>
+  <div id="preview" class="preview">
+    <div class="backdrop"></div>
+    <div class="panel">
+      <div class="hd">导出预览</div>
+      <img id="preview-img" alt="预览图">
+      <div class="preview-actions">
+        <a class="btn btn-lg" id="btnDownloadPng" download="选择结果.png">下载PNG</a>
+        <button class="btn" id="btnClosePreview">关闭</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.querySelectorAll('.rings').forEach(function(group){
+      group.addEventListener('click',function(e){
+        if(e.target.classList.contains('ring')){
+          Array.prototype.forEach.call(group.children,function(r){r.classList.remove('sel')});
+          e.target.classList.add('sel');
+        }
+      });
+    });
+    var __previewTempUrl=null;
+    var __previewPngUrl=null;
+    function showPreview(pngUrl, svgUrl){
+      var panel=document.getElementById('preview');
+      var img=document.getElementById('preview-img');
+      var btnPng=document.getElementById('btnDownloadPng');
+      __previewPngUrl=pngUrl || null;
+      img.src=pngUrl || svgUrl;
+      if(pngUrl){
+        btnPng.href=pngUrl;
+        btnPng.removeAttribute('aria-disabled');
+      }else{
+        btnPng.setAttribute('aria-disabled','true');
+      }
+      var nameInput=document.querySelector('.profile-left input.fill');
+      var nm=(nameInput && nameInput.value)?nameInput.value.trim():'';
+      var safeNm=nm.replace(/[\\\/:*?"<>|]/g,'');
+      var filename=(safeNm? (safeNm+'的跑团好恶CHECK表.png') : '跑团好恶CHECK表.png');
+      btnPng.setAttribute('download', filename);
+      panel.classList.add('show');
+      var inner=panel.querySelector('.panel');
+      if(inner){ inner.classList.add('zoom'); }
+    }
+    function closePreview(){
+      var panel=document.getElementById('preview');
+      panel.classList.remove('show');
+      if(__previewTempUrl){URL.revokeObjectURL(__previewTempUrl);__previewTempUrl=null}
+    }
+    document.getElementById('btnClosePreview').addEventListener('click',closePreview);
+    document.querySelector('#preview .backdrop').addEventListener('click',closePreview);
+    document.getElementById('preview-img').addEventListener('click',function(){
+      var panel=document.querySelector('#preview .panel');
+      panel.classList.toggle('zoom');
+    });
+    // 动态为每一行添加叉叉控件并包裹选项圈 & 均衡两列高度
+    (function(){
+      document.querySelectorAll('.row').forEach(function(row){
+        var rings=row.querySelector('.rings');
+        if(!rings) return;
+        if(rings.previousElementSibling && rings.previousElementSibling.classList && rings.previousElementSibling.classList.contains('xmark')) return;
+        var choice=document.createElement('div');
+        choice.className='choice';
+        var x=document.createElement('span');
+        x.className='xmark';
+        rings.parentNode.replaceChild(choice,rings);
+        choice.appendChild(x);
+        choice.appendChild(rings);
+        var name=row.querySelector('.name');
+        var desc=row.querySelector('.desc');
+        if(name && desc && (!name.parentElement || !name.parentElement.classList.contains('label'))){
+          var label=document.createElement('div');
+          label.className='label';
+          row.insertBefore(label, name);
+          label.appendChild(name);
+          label.appendChild(desc);
+        }
+        x.addEventListener('click',function(e){
+          e.stopPropagation();
+          x.classList.toggle('sel');
+        });
+      });
+      document.querySelectorAll('.rings').forEach(function(group){
+        group.addEventListener('click',function(e){
+          if(e.target.classList.contains('ring')){
+            Array.prototype.forEach.call(group.children,function(r){r.classList.remove('sel')});
+            e.target.classList.add('sel');
+          }
+        });
+      });
+      function sortRows(){
+        var cols=document.querySelectorAll('.cols > div');
+        if(cols.length<2) return;
+        var left=cols[0].querySelector('.list');
+        var right=cols[1].querySelector('.list');
+        if(!left||!right) return;
+        var rows=Array.prototype.slice.call(left.children).concat(Array.prototype.slice.call(right.children));
+        rows.sort(function(a,b){
+          var ta=(a.querySelector('.name')?a.querySelector('.name').textContent:'').trim();
+          var tb=(b.querySelector('.name')?b.querySelector('.name').textContent:'').trim();
+          return ta.localeCompare(tb,'zh');
+        });
+        left.innerHTML='';
+        right.innerHTML='';
+        rows.forEach(function(r){left.appendChild(r)});
+      }
+      function balanceCols(){
+        var cols=document.querySelectorAll('.cols > div');
+        if(cols.length<2) return;
+        var left=cols[0].querySelector('.list');
+        var right=cols[1].querySelector('.list');
+        if(!left||!right) return;
+        var rows=Array.prototype.slice.call(left.children).concat(Array.prototype.slice.call(right.children));
+        var heights=rows.map(function(r){return r.getBoundingClientRect().height});
+        left.innerHTML='';
+        right.innerHTML='';
+        var hLeft=0,hRight=0;
+        rows.forEach(function(row,i){
+          var rh=heights[i]||row.getBoundingClientRect().height;
+          if(hLeft<=hRight){
+            left.appendChild(row);
+            hLeft+=rh;
+          }else{
+            right.appendChild(row);
+            hRight+=rh;
+          }
+        });
+      }
+      window.addEventListener('load',function(){sortRows();balanceCols();});
+      window.addEventListener('resize',function(){balanceCols();});
+      sortRows();
+      balanceCols();
+    })();
+    function exportImage(){
+      var target=document.getElementById('capture');
+      var rect=target.getBoundingClientRect();
+      var w=Math.ceil(rect.width);
+      var h=Math.ceil(rect.height);
+      var style=document.getElementById('style-block').textContent;
+      var cloned=target.cloneNode(true);
+      (function syncFormAndIcons(){
+        var origTextareas=document.querySelectorAll('#capture textarea');
+        var clonedTextareas=cloned.querySelectorAll('textarea');
+        for(var i=0;i<clonedTextareas.length;i++){
+          clonedTextareas[i].textContent=(origTextareas[i]&&origTextareas[i].value)||'';
+        }
+        var origInputs=document.querySelectorAll('#capture input');
+        var clonedInputs=cloned.querySelectorAll('input');
+        for(var j=0;j<clonedInputs.length;j++){
+          var ci=clonedInputs[j];
+          var oi=origInputs[j];
+          if(ci.type==='checkbox'||ci.type==='radio'){
+            if(oi&&oi.checked){ci.setAttribute('checked','checked')}else{ci.removeAttribute('checked')}
+          }else{
+            ci.setAttribute('value', (oi&&oi.value)||'');
+          }
+        }
+        var unSelSvg="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linejoin='round'/></svg>";
+        var selSvg="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='%237f1d1d' stroke='%237f1d1d' stroke-width='2' stroke-linejoin='round'/></svg>";
+        Array.prototype.forEach.call(cloned.querySelectorAll('.xmark'),function(x){
+          var isSel=x.classList.contains('sel');
+          x.setAttribute('style','background:none');
+          var img=document.createElement('img');
+          img.width=32;img.height=32;img.src=isSel?selSvg:unSelSvg;
+          x.innerHTML='';
+          x.appendChild(img);
+        });
+      })();
+      var serializer=new XMLSerializer();
+      var xhtml=serializer.serializeToString(cloned);
+      var svg='\n<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">\n'+
+              '<rect x="0" y="0" width="'+w+'" height="'+h+'" fill="#ffffff"/>\n'+
+              '<foreignObject x="0" y="0" width="'+w+'" height="'+h+'">\n'+
+                '<div xmlns="http://www.w3.org/1999/xhtml">\n'+
+                  '<style>'+style+' .xmark{background:none!important} .xmark img{display:block;width:32px;height:32px}</style>'+xhtml+
+                '</div>\n'+
+              '</foreignObject>\n'+
+            '</svg>';
+      var dataUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.crossOrigin='anonymous';
+      img.onload=function(){
+        var canvas=document.createElement('canvas');
+        var scale=Math.max(2,window.devicePixelRatio||1);
+        canvas.width=w*scale;canvas.height=h*scale;
+        var ctx=canvas.getContext('2d');
+        ctx.setTransform(scale,0,0,scale,0,0);
+        ctx.imageSmoothingEnabled=true;
+        ctx.drawImage(img,0,0);
+        var pngUrl=null;
+        try{
+          pngUrl=canvas.toDataURL('image/png');
+          showPreview(pngUrl,dataUrl);
+        }catch(err){
+          if(canvas.toBlob){
+            canvas.toBlob(function(blob){
+              __previewTempUrl=URL.createObjectURL(blob);
+              showPreview(__previewTempUrl,dataUrl);
+            },'image/png');
+          }else{
+            showPreview(null,dataUrl);
+          }
+        }
+      };
+      img.src=dataUrl;
+    }
+    document.getElementById('btnExport').addEventListener('click',exportImage);
+  </script>
+</body>
+</html>
