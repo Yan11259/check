@@ -50,12 +50,14 @@
     .xmark{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linejoin='round'/></svg>")}
     .xmark.sel{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='%237f1d1d' stroke='%237f1d1d' stroke-width='2' stroke-linejoin='round'/></svg>")}
     .slider-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+    .slider-wrap{position:relative}
     .slider{width:140px;appearance:none;height:12px;border-radius:6px;outline:none;background:transparent;--p:50%;--c:#e5e7eb}
     .slider::-webkit-slider-runnable-track{height:12px;border-radius:6px;border:2px solid #9ca3af;background:linear-gradient(to right, var(--c) 0 var(--p), transparent var(--p) 100%)}
     .slider::-moz-range-track{height:12px;border-radius:6px;border:2px solid #9ca3af;background:linear-gradient(to right, var(--c) 0 var(--p), transparent var(--p) 100%)}
     .slider::-webkit-slider-thumb{-webkit-appearance:none;width:2px;height:12px;border-radius:0;background:#9ca3af;border:0;box-shadow:none}
     .slider::-moz-range-thumb{width:2px;height:12px;border-radius:0;background:#9ca3af;border:0;box-shadow:none}
     .slider-labels{display:flex;justify-content:space-between;width:140px;font-size:14px;color:#6b7280}
+    .slider-hit{position:absolute;left:0;right:0;top:-16px;bottom:-16px;cursor:pointer;background:transparent}
     .foot{display:flex;align-items:center;gap:12px;justify-content:flex-end;margin:18px 40px 24px 40px}
     .badge{width:120px;height:34px;border-radius:17px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
     .badge span{font-family:Georgia,'Times New Roman','Noto Serif SC','Songti SC','STSong','SimSun',serif;color:#6b7280;font-size:18px}
@@ -435,6 +437,42 @@
         labels.innerHTML='<span>喜欢</span><span>无所谓</span><span>讨厌</span>';
         sliderWrap.appendChild(slider);
         sliderWrap.appendChild(labels);
+        var hit=document.createElement('div');
+        hit.className='slider-hit';
+        sliderWrap.appendChild(hit);
+        function setFromClientX(cx){
+          var rect=slider.getBoundingClientRect();
+          var w=Math.max(1,rect.width);
+          var pos=Math.min(Math.max(0,cx-rect.left),w);
+          var v=Math.round(pos/w*100);
+          slider.value=String(v);
+          updateFill();
+        }
+        function hDown(e){
+          var cx=e.clientX;
+          if(cx==null && e.touches && e.touches[0]) cx=e.touches[0].clientX;
+          if(cx==null) return;
+          setFromClientX(cx);
+          if(hit.setPointerCapture && e.pointerId!=null){hit.setPointerCapture(e.pointerId)}
+          e.preventDefault();
+        }
+        function hMove(e){
+          var cx=e.clientX;
+          if(cx==null && e.touches && e.touches[0]) cx=e.touches[0].clientX;
+          if(cx==null) return;
+          setFromClientX(cx);
+          e.preventDefault();
+        }
+        hit.addEventListener('pointerdown',hDown);
+        hit.addEventListener('pointermove',hMove);
+        hit.addEventListener('touchstart',hDown,{passive:false});
+        hit.addEventListener('touchmove',hMove,{passive:false});
+        // 快捷点击标签触发极值
+        var lblNodes=labels.querySelectorAll('span');
+        if(lblNodes && lblNodes.length===3){
+          lblNodes[0].addEventListener('click',function(e){slider.value='0';updateFill();});
+          lblNodes[2].addEventListener('click',function(e){slider.value='100';updateFill();});
+        }
         rings.parentNode.replaceChild(choice,rings);
         choice.appendChild(x);
         choice.appendChild(sliderWrap);
@@ -651,7 +689,7 @@
         var canvas=document.createElement('canvas');
         var scale=Math.max(2,window.devicePixelRatio||1);
         canvas.width=w*scale;canvas.height=h*scale;
-        var ctx=canvas.getContext('2d');
+        var ctx=canvas.getContext('2d', { willReadFrequently: true });
         ctx.setTransform(scale,0,0,scale,0,0);
         ctx.imageSmoothingEnabled=true;
         ctx.drawImage(img,0,0);
@@ -676,7 +714,7 @@
             var cropH=Math.min(canvas.height, foundY + Math.round(32*scale));
             var c2=document.createElement('canvas');
             c2.width=canvas.width; c2.height=cropH;
-            var c2ctx=c2.getContext('2d');
+            var c2ctx=c2.getContext('2d', { willReadFrequently: true });
             c2ctx.drawImage(canvas,0,0);
             finalCanvas=c2;
           }
