@@ -6,8 +6,9 @@
   <title>跑团好恶CHECK表</title>
   <style id="style-block">
     *{box-sizing:border-box}
-    body{margin:0;background:#ffffff}
-    .page{width:1080px;margin:0 auto;position:relative}
+    body{margin:0;background:#ffffff;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+    body.no-scroll{overflow:hidden;position:fixed;width:100%}
+    .page{width:1200px;margin:0 auto;position:relative}
     .head{height:160px;background:#111111;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
     .title{font-family:Georgia,'Times New Roman',serif;color:#fff;font-size:54px;font-weight:800;position:relative;z-index:1}
     .brand{position:absolute;left:-30px;bottom:-40px;font-family:Impact,Haettenschweiler,'Arial Black','Segoe UI Black',sans-serif;font-size:200px;font-weight:900;pointer-events:none;opacity:0.7;z-index:0;background-image:radial-gradient(circle at 0 0, rgba(0,0,0,0.22) 0 2px, transparent 2px),radial-gradient(circle at 6px 6px, rgba(0,0,0,0.22) 0 2px, transparent 2px),linear-gradient(to bottom, #9ca3af 0%, #000000 100%);background-size:12px 12px,12px 12px,100% 100%;background-repeat:repeat;background-position:0 0,0 0,0 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
@@ -16,15 +17,16 @@
     .profile-left,.profile-right{white-space:nowrap}
     .profile-right{text-align:right}
     .fill{appearance:none;border:0;outline:0;background:transparent;border-bottom:1px solid #e5e7eb;color:#111;font-family:Georgia,'Times New Roman',serif;font-size:20px;padding:0 2px;margin-left:6px;min-width:140px}
-    .origin{font-family:Georgia,'Times New Roman',serif;color:#9ca3af;font-size:13px;margin:8px 40px 0 40px;line-height:1.4;font-style:italic}
-    .origin a{color:#9ca3af;text-decoration:underline}
+    .origin{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:18px;margin:8px 40px 0 40px;line-height:1.2}
+    .origin a{color:#111;text-decoration:underline}
+    .meta{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:18px;margin:8px 40px 0 40px;line-height:1.2;display:flex;justify-content:space-between;align-items:flex-start}
+    .meta-left{flex:1;min-width:0}
+    .meta-right{white-space:nowrap;margin-left:12px}
+    .meta a{color:#111;text-decoration:underline}
     .origin a:hover{text-decoration:underline}
     .wrap{font-family:Georgia,'Times New Roman',serif;color:#111;margin:10px 40px 0 40px}
     .legend{display:flex;align-items:center;gap:18px;margin:12px 0 24px 0}
     .legend .pair{display:flex;align-items:center;gap:8px}
-    .legend .ring.ok{background:#22c55e;border-color:#22c55e}
-    .legend .ring.meh{background:#f59e0b;border-color:#f59e0b}
-    .legend .ring.bad{background:#ef4444;border-color:#ef4444}
     .legend .t{font-size:28px;font-weight:800;color:#111}
     .label{font-size:24px;color:#4b5563}
     .ring{display:inline-block;width:32px;height:32px;border-radius:999px;background:transparent;vertical-align:middle;border:3px solid #9ca3af;cursor:pointer;user-select:none}
@@ -34,60 +36,102 @@
     .rings .ring:nth-child(3).sel{background:#ef4444;border-color:#ef4444}
     .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
     .sub{font-size:28px;font-weight:800;color:#111;margin:8px 0 10px 0}
+    .sub:empty{display:none}
     .col-head{display:flex;justify-content:flex-end;gap:14px;color:#9ca3af;font-size:14px;margin:4px 0 6px 0;line-height:1.1;text-align:center}
     .col-head span{width:32px;display:inline-block}
-    .list{display:flex;flex-direction:column;gap:6px}
-    .row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #e5e7eb}
+    .list{display:flex;flex-direction:column;gap:4px}
+    .row{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;padding:10px 4px;border-bottom:1px solid #e5e7eb}
     .label{display:flex;flex-direction:column;flex:1;min-width:0}
     .name{display:block;font-size:26px;font-weight:800;color:#111;line-height:1.6}
-    .desc{display:block;font-size:16px;color:#6b7280;margin-left:0;margin-top:1px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .rings{display:flex;gap:14px;flex-shrink:0}
-    .choice{display:flex;align-items:center;gap:16px;flex-shrink:0}
+    .desc{display:block;font-size:16px;color:#6b7280;margin-left:0;margin-top:1px;line-height:1.3;white-space:normal;overflow:hidden;text-overflow:ellipsis}
+    .rings{display:none}
+    .choice{display:flex;align-items:center;gap:6px;flex-shrink:0}
     .xmark{display:inline-block;width:32px;height:32px;cursor:pointer;background-repeat:no-repeat;background-position:center;background-size:100% 100%;position:relative;z-index:1}
     .xmark{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linejoin='round'/></svg>")}
     .xmark.sel{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M6 2 L16 12 L26 2 L30 6 L20 16 L30 26 L26 30 L16 20 L6 30 L2 26 L12 16 L2 6 Z' fill='%237f1d1d' stroke='%237f1d1d' stroke-width='2' stroke-linejoin='round'/></svg>")}
+    .slider-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+    .slider{width:140px;appearance:none;height:12px;border-radius:6px;outline:none;background:transparent;--p:50%;--c:#e5e7eb}
+    .slider::-webkit-slider-runnable-track{height:12px;border-radius:6px;border:2px solid #9ca3af;background:linear-gradient(to right, var(--c) 0 var(--p), transparent var(--p) 100%)}
+    .slider::-moz-range-track{height:12px;border-radius:6px;border:2px solid #9ca3af;background:linear-gradient(to right, var(--c) 0 var(--p), transparent var(--p) 100%)}
+    .slider::-webkit-slider-thumb{-webkit-appearance:none;width:2px;height:12px;border-radius:0;background:#9ca3af;border:0;box-shadow:none}
+    .slider::-moz-range-thumb{width:2px;height:12px;border-radius:0;background:#9ca3af;border:0;box-shadow:none}
+    .slider-labels{display:flex;justify-content:space-between;width:140px;font-size:14px;color:#6b7280}
     .foot{display:flex;align-items:center;gap:12px;justify-content:flex-end;margin:18px 40px 24px 40px}
     .badge{width:120px;height:34px;border-radius:17px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
     .badge span{font-family:Georgia,'Times New Roman',serif;color:#6b7280;font-size:18px}
-    .actions{position:fixed;right:24px;bottom:24px;z-index:10}
-    .btn{appearance:none;border:0;outline:0;background:#111111;color:#ffffff;font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:700;border-radius:10px;padding:10px 14px;cursor:pointer}
+    .actions{position:fixed;right:18px;bottom:18px;z-index:1000}
+    .actions.hide{display:none}
+    .btn{appearance:none;border:0;outline:0;background:#111111;color:#ffffff;font-family:Georgia,'Times New Roman',serif;font-size:18px;font-weight:800;border-radius:18px;padding:12px 18px;cursor:pointer;min-width:48px;min-height:48px;transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease}
     .btn:active{transform:scale(0.98)}
-    .btn.btn-lg{font-size:18px;padding:14px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+    .btn.btn-lg{font-size:20px;padding:16px 24px;border-radius:999px;box-shadow:0 12px 32px rgba(0,0,0,0.25)}
     .preview{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100}
     .preview.show{display:flex}
+    .preview.show .backdrop{animation:fadeIn .18s ease}
+    .preview.show .panel{animation:zoomIn .2s ease}
     .preview .backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.4)}
-    .preview .panel{position:relative;background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,0.25);padding:16px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;gap:12px}
-    .preview .panel .hd{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:18px;font-weight:800}
-    .preview .panel img{max-width:100%;max-height:70vh;border:1px solid #e5e7eb;border-radius:8px;cursor:zoom-in}
+    .preview .panel{position:relative;background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,0.25);padding:16px;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;gap:12px}
+    .preview .panel .hd{font-family:Georgia,'Times New Roman',serif;color:#111;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:space-between}
+    .preview .panel img{max-width:100%;max-height:80vh;border:1px solid #e5e7eb;border-radius:8px;cursor:zoom-in}
+    .preview .panel .img-wrap{max-height:80vh;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:none}
+    .preview .panel .img-wrap img{display:block;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+    .preview .panel .img-wrap.zoom img{max-width:none;max-height:none;cursor:grab}
+    
     .preview .panel.zoom{overflow:auto}
     .preview .panel.zoom img{max-width:none;max-height:none;cursor:zoom-out}
     .preview-actions{display:flex;gap:10px;justify-content:flex-end}
+    .preview .panel .preview-actions .btn.btn-lg{box-shadow:none}
     .btn[aria-disabled="true"]{opacity:.5;pointer-events:none}
+    @media (max-width: 640px){
+      .actions{right:12px;bottom:12px}
+      .btn{min-width:56px;min-height:56px}
+      .btn.btn-lg{font-size:22px;padding:18px 26px}
+      .head{height:120px}
+      .title{font-size:42px}
+      .preview .panel{padding:12px;max-width:96vw;max-height:94vh}
+      .preview .panel .hd{font-size:16px;gap:8px}
+      .preview-actions{gap:8px;flex-wrap:wrap}
+      .preview .panel .preview-actions .btn{min-width:auto;min-height:40px;padding:10px 12px;font-size:16px;border-radius:12px}
+      .preview .panel .preview-actions .btn.btn-lg{font-size:16px;padding:10px 12px;border-radius:12px;box-shadow:none}
+      html,body{overflow-x:hidden}
+      .page-wrap{overflow:hidden}
+      .page{transform-origin:top left;transform:scale(var(--page-scale,1));width:1200px}
+      .cols{display:grid;grid-template-columns:1fr;gap:8px}
+      .list{gap:2px}
+      .row{display:grid;grid-template-columns:minmax(0, calc(100% - var(--ctrl-w,168px))) var(--ctrl-w,168px);align-items:center;padding:8px 2px;gap:2px}
+      .choice{width:var(--ctrl-w,168px)}
+      .choice{gap:2px}
+      .name{font-size:30px}
+      .desc{font-size:15px}
+      .fill{font-size:22px}
+      .slider{width:132px;height:18px}
+      .slider::-webkit-slider-runnable-track{height:18px}
+      .slider::-moz-range-track{height:18px}
+      .slider::-webkit-slider-thumb{height:18px}
+      .slider::-moz-range-thumb{height:18px}
+      .slider-labels{width:132px;font-size:13px}
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes zoomIn{from{transform:scale(0.98);opacity:0}to{transform:scale(1);opacity:1}}
     .notes{font-family:Georgia,'Times New Roman',serif;color:#111;margin:20px 40px}
     .notes-hd{font-size:20px;font-weight:800;margin-bottom:8px}
     .notes-input{width:100%;min-height:120px;border:1px solid #e5e7eb;border-radius:8px;padding:10px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#111;resize:none}
   </style>
 </head>
 <body>
-  <div class="page" id="capture">
+  <div class="page-wrap"><div class="page" id="capture">
     <div class="head"><div class="title">跑团好恶CHECK表</div><div class="brand">inSANe</div></div>
-    <div class="profile"><span class="profile-left">填表人：<input class="fill" type="text">  常用跑团平台：<input class="fill" type="text"></span><span class="profile-right">翻译：瞬蓝  制表：燕</span></div>
-    <div class="origin">
-      翻译/参考『蜜蝋文庫専用・地雷チェックシート』【 <a href="https://www.pixiv.net/novel/show.php?id=14545836" target="_blank" rel="noopener noreferrer">https://www.pixiv.net/novel/show.php?id=14545836</a> 】<br>
-      シナリオ要素事前チェックシート【 <a href="https://fimless.booth.pm/items/2640500" target="_blank" rel="noopener noreferrer">https://fimless.booth.pm/items/2640500</a> 】
-    </div>
+    <div class="meta"><div class="meta-left">翻译/参考『蜜蝋文庫専用・地雷チェックシート』【 <a href="https://www.pixiv.net/novel/show.php?id=14545836" target="_blank" rel="noopener noreferrer">https://www.pixiv.net/novel/show.php?id=14545836</a> 】<br>
+      シナリオ要素事前チェックシート【 <a href="https://fimless.booth.pm/items/2640500" target="_blank" rel="noopener noreferrer">https://fimless.booth.pm/items/2640500</a> 】</div><div class="meta-right">翻译：瞬蓝  制表：燕</div></div>
+    <div class="profile"><span class="profile-left">填表人：<input class="fill" type="text">  常用跑团平台：<input class="fill" type="text"></span></div>
     
     <div class="wrap">
       <div class="legend">
         <span class="t">选项说明：</span>
-        <span class="pair"><span class="label">ok</span><span class="ring ok"></span></span>
-        <span class="pair"><span class="label">勉强可以</span><span class="ring meh"></span></span>
-        <span class="pair"><span class="label">完全不行</span><span class="ring bad"></span></span>
-        <span class="pair"><span class="label">本人参与绝对不行</span><span class="xmark sel" title="旁观OK，我参与NO"></span></span>
+        <span class="pair"><span class="label">不希望出现在我身上</span><span class="xmark sel" title="旁观OK，我参与NO"></span></span>
       </div>
       <div class="cols">
         <div>
-          <div class="col-head"><span></span><span>ok</span><span>勉强<br>可以</span><span>完全<br>不行</span></div>
+          <div class="col-head"><span></span></div>
           <div class="list">
             <div class="row"><span class="name">PC死亡</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">PC杀人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
@@ -136,7 +180,7 @@
         </div>
         <div>
           <div class="sub"></div>
-          <div class="col-head"><span></span><span>ok</span><span>勉强<br>可以</span><span>完全<br>不行</span></div>
+          <div class="col-head"><span></span></div>
           <div class="list">
             <div class="row"><span class="name">人偶</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">食人</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
@@ -174,7 +218,7 @@
             <div class="row"><span class="name">（校园/职场）霸凌</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">对规则原本世界观的修改·个人解释</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">使用来自其他作品的世界观</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
-            <div class="row"><span class="name">使用来自其他作品（非原创）的角色</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
+            <div class="row"><span class="name">使用来自其他作品的角色</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">克苏鲁神话元素</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">使用同人扩展/原创战斗数据</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
             <div class="row"><span class="name">无剧情分歧（一本道）</span><div class="rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div></div>
@@ -186,21 +230,23 @@
       </div>
     </div>
     <div class="notes">
-      <div class="notes-hd">备注</div>
+      <div class="notes-hd">关于雷点，我还想说：</div>
       <textarea class="notes-input"></textarea>
     </div>
     <div class="foot"></div>
-  </div>
+  </div></div>
   <div class="actions"><button class="btn btn-lg" id="btnExport">导出图片</button></div>
   <div id="preview" class="preview">
     <div class="backdrop"></div>
     <div class="panel">
-      <div class="hd">导出预览</div>
-      <img id="preview-img" alt="预览图">
-      <div class="preview-actions">
-        <a class="btn btn-lg" id="btnDownloadPng" download="选择结果.png">下载PNG</a>
-        <button class="btn" id="btnClosePreview">关闭</button>
+      <div class="hd">
+        <span>导出预览</span>
+        <div class="preview-actions">
+          <a class="btn btn-lg" id="btnDownloadPng" download="选择结果.png">下载PNG</a>
+          <button class="btn" id="btnClosePreview">关闭</button>
+        </div>
       </div>
+      <div class="img-wrap"><img id="preview-img" alt="预览图" draggable="false"></div>
     </div>
   </div>
   <script>
@@ -233,19 +279,99 @@
       btnPng.setAttribute('download', filename);
       panel.classList.add('show');
       var inner=panel.querySelector('.panel');
-      if(inner){ inner.classList.add('zoom'); }
+      if(inner){ inner.classList.remove('zoom'); }
+      document.body.classList.add('no-scroll');
+      var actions=document.querySelector('.actions');
+      if(actions){ actions.classList.add('hide'); }
     }
     function closePreview(){
       var panel=document.getElementById('preview');
       panel.classList.remove('show');
+      document.body.classList.remove('no-scroll');
+      var actions=document.querySelector('.actions');
+      if(actions){ actions.classList.remove('hide'); }
+      var wrap=document.querySelector('#preview .img-wrap');
+      var img=document.getElementById('preview-img');
+      if(wrap){ wrap.classList.remove('zoom'); }
+      if(img){ img.style.transform=''; img.style.cursor='zoom-in'; }
       if(__previewTempUrl){URL.revokeObjectURL(__previewTempUrl);__previewTempUrl=null}
     }
     document.getElementById('btnClosePreview').addEventListener('click',closePreview);
     document.querySelector('#preview .backdrop').addEventListener('click',closePreview);
-    document.getElementById('preview-img').addEventListener('click',function(){
-      var panel=document.querySelector('#preview .panel');
-      panel.classList.toggle('zoom');
-    });
+    function applyPageScale(){
+      var vw = Math.max(document.documentElement.clientWidth||0, window.innerWidth||0);
+      var s = Math.min(1, vw/1200);
+      document.documentElement.style.setProperty('--page-scale', s.toFixed(3));
+      var page=document.querySelector('.page');
+      var wrap=document.querySelector('.page-wrap');
+      if(page&&wrap){
+        if(s<1){
+          var h = Math.ceil(page.offsetHeight * s);
+          wrap.style.height = h+'px';
+        }else{
+          wrap.style.height='auto';
+        }
+      }
+    }
+    window.addEventListener('load', applyPageScale);
+    window.addEventListener('resize', applyPageScale);
+    var __zoomActive=false;
+    var __zoomScale=1;
+    var __zoomDx=0;
+    var __zoomDy=0;
+    var __dragging=false;var __lastX=0;var __lastY=0;
+    function applyZoomTransform(){
+      var img=document.getElementById('preview-img');
+      img.style.transform='translate('+__zoomDx+'px,'+__zoomDy+'px) scale('+__zoomScale+')';
+      img.style.cursor=__zoomActive? (__dragging?'grabbing':'grab') : 'zoom-in';
+    }
+    function toggleZoom(){
+      var wrap=document.querySelector('#preview .img-wrap');
+      if(!wrap) return;
+      if(!__zoomActive){
+        __zoomActive=true;wrap.classList.add('zoom');
+        __zoomScale=(window.innerWidth<=640?1.3:1.5);__zoomDx=0;__zoomDy=0;applyZoomTransform();
+      }else{
+        __zoomActive=false;wrap.classList.remove('zoom');
+        __zoomScale=1;__zoomDx=0;__zoomDy=0;var img=document.getElementById('preview-img');img.style.transform='';img.style.cursor='zoom-in';
+      }
+    }
+    document.getElementById('preview-img').addEventListener('click',function(e){toggleZoom();});
+    function onPointerDown(e){
+      if(!__zoomActive) return;
+      __dragging=true;__lastX=e.clientX;__lastY=e.clientY;applyZoomTransform();
+      if(e.currentTarget && e.currentTarget.setPointerCapture){e.currentTarget.setPointerCapture(e.pointerId)}
+      e.preventDefault();
+    }
+    function onPointerMove(e){
+      if(!__zoomActive||!__dragging) return;
+      var dx=e.clientX-__lastX;var dy=e.clientY-__lastY;__lastX=e.clientX;__lastY=e.clientY;
+      __zoomDx+=dx;__zoomDy+=dy;applyZoomTransform();
+      e.preventDefault();
+    }
+    function onPointerUp(e){
+      if(!__zoomActive) return;__dragging=false;applyZoomTransform();e.preventDefault();
+    }
+    function onWheel(e){
+      if(!__zoomActive) return;
+      var delta=e.deltaY<0?1.1:0.9;var next=Math.max(1, Math.min(2, __zoomScale*delta));
+      __zoomScale=next;applyZoomTransform();e.preventDefault();
+    }
+    document.querySelector('#preview .img-wrap').addEventListener('pointerdown',onPointerDown);
+    document.querySelector('#preview .img-wrap').addEventListener('pointermove',onPointerMove);
+    document.querySelector('#preview .img-wrap').addEventListener('pointerup',onPointerUp);
+    document.querySelector('#preview .img-wrap').addEventListener('pointercancel',onPointerUp);
+    document.querySelector('#preview .img-wrap').addEventListener('wheel',onWheel,{passive:false});
+    if(!window.PointerEvent){
+      var wrap=document.querySelector('#preview .img-wrap');
+      function ts(e){ if(!__zoomActive) return; __dragging=true; var t=e.touches&&e.touches[0]; if(!t) return; __lastX=t.clientX; __lastY=t.clientY; applyZoomTransform(); e.preventDefault(); }
+      function tm(e){ if(!__zoomActive||!__dragging) return; var t=e.touches&&e.touches[0]; if(!t) return; var dx=t.clientX-__lastX; var dy=t.clientY-__lastY; __lastX=t.clientX; __lastY=t.clientY; __zoomDx+=dx; __zoomDy+=dy; applyZoomTransform(); e.preventDefault(); }
+      function te(e){ if(!__zoomActive) return; __dragging=false; applyZoomTransform(); e.preventDefault(); }
+      wrap.addEventListener('touchstart',ts,{passive:false});
+      wrap.addEventListener('touchmove',tm,{passive:false});
+      wrap.addEventListener('touchend',te,{passive:false});
+      wrap.addEventListener('touchcancel',te,{passive:false});
+    }
     // 动态为每一行添加叉叉控件并包裹选项圈 & 均衡两列高度
     (function(){
       document.querySelectorAll('.row').forEach(function(row){
@@ -256,9 +382,47 @@
         choice.className='choice';
         var x=document.createElement('span');
         x.className='xmark';
+        var sliderWrap=document.createElement('div');
+        sliderWrap.className='slider-wrap';
+        var slider=document.createElement('input');
+        slider.className='slider';
+        slider.type='range';
+        slider.min='0';
+        slider.max='100';
+        slider.step='1';
+        slider.value='50';
+        function updateFill(){
+          var v=parseInt(slider.value,10)||0;
+          var t=v/100;
+          var g=[22,163,74];
+          var m=[229,231,235];
+          var r=[220,38,38];
+          var mix=function(a,b,u){return [
+            Math.round(a[0]*(1-u)+b[0]*u),
+            Math.round(a[1]*(1-u)+b[1]*u),
+            Math.round(a[2]*(1-u)+b[2]*u)
+          ]};
+          var col = t<=0.5 ? mix(g,m,t*2) : mix(m,r,(t-0.5)*2);
+          var hex = '#'+col.map(function(x){var s=x.toString(16);return s.length===1?'0'+s:s}).join('');
+          slider.style.setProperty('--p', v+'%');
+          slider.style.setProperty('--c', hex);
+          var lbls=(labels && labels.querySelectorAll)?labels.querySelectorAll('span'):null;
+          if(lbls && lbls.length===3){
+            lbls[0].style.color = (v===0)? '#16a34a' : '#6b7280';
+            lbls[1].style.color = '#6b7280';
+            lbls[2].style.color = (v===100)? '#dc2626' : '#6b7280';
+          }
+        }
+        slider.addEventListener('input', updateFill);
+        updateFill();
+        var labels=document.createElement('div');
+        labels.className='slider-labels';
+        labels.innerHTML='<span>喜欢</span><span>无所谓</span><span>讨厌</span>';
+        sliderWrap.appendChild(slider);
+        sliderWrap.appendChild(labels);
         rings.parentNode.replaceChild(choice,rings);
         choice.appendChild(x);
-        choice.appendChild(rings);
+        choice.appendChild(sliderWrap);
         var name=row.querySelector('.name');
         var desc=row.querySelector('.desc');
         if(name && desc && (!name.parentElement || !name.parentElement.classList.contains('label'))){
@@ -273,14 +437,7 @@
           x.classList.toggle('sel');
         });
       });
-      document.querySelectorAll('.rings').forEach(function(group){
-        group.addEventListener('click',function(e){
-          if(e.target.classList.contains('ring')){
-            Array.prototype.forEach.call(group.children,function(r){r.classList.remove('sel')});
-            e.target.classList.add('sel');
-          }
-        });
-      });
+      
       function sortRows(){
         var cols=document.querySelectorAll('.cols > div');
         if(cols.length<2) return;
@@ -288,10 +445,15 @@
         var right=cols[1].querySelector('.list');
         if(!left||!right) return;
         var rows=Array.prototype.slice.call(left.children).concat(Array.prototype.slice.call(right.children));
+        var coll=new Intl.Collator('zh');
         rows.sort(function(a,b){
           var ta=(a.querySelector('.name')?a.querySelector('.name').textContent:'').trim();
           var tb=(b.querySelector('.name')?b.querySelector('.name').textContent:'').trim();
-          return ta.localeCompare(tb,'zh');
+          var ca=ta.charAt(0);
+          var cb=tb.charAt(0);
+          var ccmp=coll.compare(ca,cb);
+          if(ccmp!==0) return ccmp;
+          return coll.compare(ta,tb);
         });
         left.innerHTML='';
         right.innerHTML='';
@@ -305,19 +467,24 @@
         if(!left||!right) return;
         var rows=Array.prototype.slice.call(left.children).concat(Array.prototype.slice.call(right.children));
         var heights=rows.map(function(r){return r.getBoundingClientRect().height});
+        var total=heights.reduce(function(a,b){return a+b},0);
+        var target=total/2;
+        var sum=0; var split=rows.length;
+        for(var i=0;i<heights.length;i++){
+          var next=sum+heights[i];
+          if(next>=target){
+            // choose closer split point
+            var diffPrev=Math.abs(target-sum);
+            var diffNext=Math.abs(target-next);
+            split = diffNext<diffPrev ? (i+1) : i;
+            break;
+          }
+          sum=next;
+        }
         left.innerHTML='';
         right.innerHTML='';
-        var hLeft=0,hRight=0;
-        rows.forEach(function(row,i){
-          var rh=heights[i]||row.getBoundingClientRect().height;
-          if(hLeft<=hRight){
-            left.appendChild(row);
-            hLeft+=rh;
-          }else{
-            right.appendChild(row);
-            hRight+=rh;
-          }
-        });
+        rows.slice(0,split).forEach(function(r){left.appendChild(r)});
+        rows.slice(split).forEach(function(r){right.appendChild(r)});
       }
       window.addEventListener('load',function(){sortRows();balanceCols();});
       window.addEventListener('resize',function(){balanceCols();});
@@ -326,9 +493,8 @@
     })();
     function exportImage(){
       var target=document.getElementById('capture');
-      var rect=target.getBoundingClientRect();
-      var w=Math.ceil(rect.width);
-      var h=Math.ceil(rect.height);
+      var w=Math.ceil(target.offsetWidth);
+      var h=Math.ceil(target.offsetHeight);
       var style=document.getElementById('style-block').textContent;
       var cloned=target.cloneNode(true);
       (function syncFormAndIcons(){
@@ -365,7 +531,7 @@
               '<rect x="0" y="0" width="'+w+'" height="'+h+'" fill="#ffffff"/>\n'+
               '<foreignObject x="0" y="0" width="'+w+'" height="'+h+'">\n'+
                 '<div xmlns="http://www.w3.org/1999/xhtml">\n'+
-                  '<style>'+style+' .xmark{background:none!important} .xmark img{display:block;width:32px;height:32px}</style>'+xhtml+
+                  '<style>'+style+' :root{--page-scale:1} #capture .page{transform:none!important;width:1200px!important} #capture .cols{grid-template-columns:1fr 1fr!important} @media (max-width:640px){#capture .page{transform:none!important} #capture .cols{grid-template-columns:1fr 1fr!important}} .xmark{background:none!important} .xmark img{display:block;width:32px;height:32px}</style>'+xhtml+
                 '</div>\n'+
               '</foreignObject>\n'+
             '</svg>';
