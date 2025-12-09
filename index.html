@@ -440,11 +440,16 @@
         var hit=document.createElement('div');
         hit.className='slider-hit';
         sliderWrap.appendChild(hit);
-        function setFromClientX(cx){
+        var __dragging=false;
+        function setFromClientX(cx, isMouse){
           var rect=slider.getBoundingClientRect();
           var w=Math.max(1,rect.width);
           var pos=Math.min(Math.max(0,cx-rect.left),w);
           var v=Math.round(pos/w*100);
+          if(isMouse){
+            var quant=5;
+            v=Math.max(0,Math.min(100,Math.round(v/quant)*quant));
+          }
           slider.value=String(v);
           updateFill();
         }
@@ -452,7 +457,14 @@
           var cx=e.clientX;
           if(cx==null && e.touches && e.touches[0]) cx=e.touches[0].clientX;
           if(cx==null) return;
-          setFromClientX(cx);
+          var isMouse = (e.pointerType==='mouse');
+          if(isMouse){
+            if(!(e.buttons&1) && e.button!==0) return;
+            __dragging=true;
+          }else{
+            __dragging=true;
+            setFromClientX(cx,false);
+          }
           if(hit.setPointerCapture && e.pointerId!=null){hit.setPointerCapture(e.pointerId)}
           e.preventDefault();
         }
@@ -460,11 +472,21 @@
           var cx=e.clientX;
           if(cx==null && e.touches && e.touches[0]) cx=e.touches[0].clientX;
           if(cx==null) return;
-          setFromClientX(cx);
+          var isMouse = (e.pointerType==='mouse');
+          if(isMouse){
+            if(!__dragging) return;
+            setFromClientX(cx,true);
+          }else{
+            setFromClientX(cx,false);
+          }
           e.preventDefault();
         }
+        function hUp(e){ __dragging=false; }
         hit.addEventListener('pointerdown',hDown);
         hit.addEventListener('pointermove',hMove);
+        hit.addEventListener('pointerup',hUp);
+        hit.addEventListener('pointerleave',hUp);
+        hit.addEventListener('pointercancel',hUp);
         hit.addEventListener('touchstart',hDown,{passive:false});
         hit.addEventListener('touchmove',hMove,{passive:false});
         // 快捷点击标签触发极值
